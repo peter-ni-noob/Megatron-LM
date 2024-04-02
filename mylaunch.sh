@@ -6,9 +6,9 @@ NODE_RANK=0
 WORLD_SIZE=$(($GPUS_PER_NODE*$NNODES))
 DISTRIBUTED_ARGS="--nproc_per_node $GPUS_PER_NODE --nnodes $NNODES --node_rank $NODE_RANK --master_addr $MASTER_ADDR --master_port $MASTER_PORT"
 CHECKPOINT_PATH=/root/Megatron-LM/experiments/mygpt2
-VOCAB_FILE=/root/Megatron-LM/expriments/gpt2_tokenizer_element/vocab.json
-MERGE_FILE=/root/Megatron-LM/expriments/gpt2_tokenizer_element/merges.txt
-DATA_PATH=/data/openwebtext-npy/train_data.json
+VOCAB_FILE=/root/Megatron-LM/experiments/gpt2_tokenizer_element/gpt2-vocab.json
+MERGE_FILE=/root/Megatron-LM/experiments/gpt2_tokenizer_element/gpt2-merges.txt
+DATA_PATH=/data/my-gpt2_text_document
 GPT_ARGS="--num-layers 2
 --hidden-size 768
 --num-attention-heads 12
@@ -30,10 +30,12 @@ GPT_ARGS="--num-layers 2
 --eval-iters 10
 "
 export CUDA_DEVICE_MAX_CONNECTIONS=1
+export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+export CUDA_HOME=/usr/local/cuda
 TENSORBOARD_ARGS="--tensorboard-dir experiments/tensorboard"
-python3 -m torch.distributed.run $DISTRIBUTED_ARGS \
+torchrun $DISTRIBUTED_ARGS \
         pretrain_gpt.py \
-        --tensor-model-parallel-size 2 \
+        --tensor-model-parallel-size 4 \
         --pipeline-model-parallel-size 1 \
         $GPT_ARGS \
         --vocab-file $VOCAB_FILE \
@@ -41,4 +43,5 @@ python3 -m torch.distributed.run $DISTRIBUTED_ARGS \
         --save $CHECKPOINT_PATH \
         --load $CHECKPOINT_PATH \
         --data-path $DATA_PATH \
+        --distributed-backend nccl \
         $TENSORBOARD_ARGS
