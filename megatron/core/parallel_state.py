@@ -8,6 +8,7 @@ from datetime import timedelta
 from typing import Optional
 
 import torch
+import torch.distributed
 
 from .utils import GlobalMemoryBuffer
 
@@ -185,7 +186,7 @@ def initialize_model_parallel(
             process groups. See PyTorch documentation at
             https://pytorch.org/docs/stable/distributed.html for
             caveats.
-
+    #group 里表示（互相）要通信的对象
     Let's say we have a total of 16 GPUs denoted by g0 ... g15 and we
     use 2 GPUs to parallelize the model tensor, and 4 GPUs to parallelize
     the model pipeline. The present function will
@@ -231,7 +232,7 @@ def initialize_model_parallel(
         raise RuntimeError(
             f"combination of expert model prallellism and context parallelism is not supported"
         )
-
+    #grouped
     num_tensor_model_parallel_groups: int = world_size // tensor_model_parallel_size
     num_pipeline_model_parallel_groups: int = world_size // pipeline_model_parallel_size
 
@@ -275,6 +276,7 @@ def initialize_model_parallel(
     global _DATA_PARALLEL_GLOBAL_RANKS_WITH_CP
     assert _DATA_PARALLEL_GROUP is None, 'data parallel group is already initialized'
     all_data_parallel_group_ranks_with_cp = []
+    #cp是context parallelism，每个进程rank会有自己的数据并行组
     for i in range(pipeline_model_parallel_size):
         start_rank = i * num_pipeline_model_parallel_groups
         end_rank = (i + 1) * num_pipeline_model_parallel_groups
@@ -299,6 +301,7 @@ def initialize_model_parallel(
             group_with_cp_gloo = torch.distributed.new_group(
                 ranks_with_cp, timeout=timeout, backend="gloo"
             )
+            #cp是context parrallelism
             if rank in ranks_with_cp:
                 _DATA_PARALLEL_GROUP_WITH_CP = group_with_cp
                 _DATA_PARALLEL_GROUP_WITH_CP_GLOO = group_with_cp_gloo

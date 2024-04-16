@@ -208,6 +208,7 @@ def _initialize_distributed():
     args = get_args()
 
     device_count = torch.cuda.device_count()
+    # import torch.distributed
     if torch.distributed.is_initialized():
 
         if args.rank == 0:
@@ -234,6 +235,7 @@ def _initialize_distributed():
                 args.local_rank = device
             torch.cuda.set_device(device)
         # Call the init process
+        # import torch.distributed,每个进行都会跑
         torch.distributed.init_process_group(
             backend=args.distributed_backend,
             world_size=args.world_size,
