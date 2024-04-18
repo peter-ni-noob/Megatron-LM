@@ -130,7 +130,7 @@ def _compile_dependencies():
         args.num_attention_heads / args.tensor_model_parallel_size
     ) * args.micro_batch_size
     # Constraints on sequence length and attn_batch_size to enable warp based
-    # optimization and upper triangular optimization (for causal mask)
+    # optimization and upper triangular optimization (for causal mask)应该是某种优化
     custom_kernel_constraint = (
         seq_len > 16
         and seq_len <= 16384

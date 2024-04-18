@@ -28,6 +28,7 @@ _DATA_PARALLEL_GROUP_GLOO = None
 # tensor model parallel group and data parallel group combined
 # used for fp8 and moe training
 _TENSOR_AND_DATA_PARALLEL_GROUP = None
+_TENSOR_MODEL_PARALLEL_RANK = None
 # Expert parallel group that the current rank belongs to.
 _TENSOR_AND_EXPERT_PARALLEL_GROUP = None
 _DATA_MODULO_EXPERT_PARALLEL_GROUP = None
@@ -366,6 +367,7 @@ def initialize_model_parallel(
 
     # Build the tensor model-parallel groups.
     global _TENSOR_MODEL_PARALLEL_GROUP
+    global _TENSOR_MODEL_PARALLEL_RANK
     assert (
         _TENSOR_MODEL_PARALLEL_GROUP is None
     ), 'tensor model parallel group is already initialized'
@@ -376,6 +378,7 @@ def initialize_model_parallel(
         )
         if rank in ranks:
             _TENSOR_MODEL_PARALLEL_GROUP = group
+            _TENSOR_MODEL_PARALLEL_RANK=ranks
 
     # Build the pipeline model-parallel groups and embedding groups
     # (first and last rank in each pipeline model-parallel group).
