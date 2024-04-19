@@ -56,10 +56,10 @@ def get_language_model(config, num_tokentypes, add_pooler,
                        pre_process=True, post_process=True):
     """Build language model and return along with the key to save."""
     args = get_args()
-    if config.init_method is None:
+    if config.init_method is None:#tensor的初始化方法，不是None，是init_method_normal,torch.nn.init.normal_(tensor, mean=0.0, std=sigma)
         config.init_method = init_method_normal(config.init_method_std)
 
-    if config.output_layer_init_method is None:
+    if config.output_layer_init_method is None:#见下面
         config.output_layer_init_method = scaled_init_method_normal(config.init_method_std,
                                                                     config.num_layers)
 
@@ -331,7 +331,7 @@ class TransformerLanguageModel(MegatronModule):
                  num_tokentypes=0,
                  add_encoder=True,
                  add_decoder=False,
-                 decoder_attn_mask_type=AttnMaskType.causal,
+                 decoder_attn_mask_type=AttnMaskType.causal,#三角的mask，为了让前面预测的token不受后面token影响
                  add_pooler=False,
                  pre_process=True,
                  post_process=True):
@@ -364,7 +364,7 @@ class TransformerLanguageModel(MegatronModule):
                                        self.num_tokentypes)
             self._embedding_key = 'embedding'
 
-        # Rotary positional embeddings
+        # Rotary positional embeddings,对GPT2为 false
         self.use_rotary_position_embeddings = \
             args.position_embedding_type == 'rope'
         if self.use_rotary_position_embeddings:

@@ -100,7 +100,7 @@ def _initialize_affine_weight_gpu(
         with get_cuda_rng_tracker().fork(get_expert_parallel_rng_tracker_name()):
             init_method(weight)
 
-
+#对embedding inputsize=768
 def _initialize_affine_weight_cpu(
     weight,
     output_size,

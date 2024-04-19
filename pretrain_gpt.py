@@ -45,6 +45,7 @@ def model_provider(pre_process=True, post_process=True) -> Union[GPTModel, megat
         Union[GPTModel, megatron.legacy.model.GPTModel]: The returned model
     """
     args = get_args()
+    #false args.transformer_impl=="local"
     use_te = args.transformer_impl == "transformer_engine"
 
     print_rank_0('building GPT model ...')
@@ -52,8 +53,8 @@ def model_provider(pre_process=True, post_process=True) -> Union[GPTModel, megat
     if args.yaml_cfg is not None:
         config = core_transformer_config_from_yaml(args, "language_model")
     else:
-        config = core_transformer_config_from_args(args)
-
+        config = core_transformer_config_from_args(args)#进入这里
+    #false 
     if args.use_mcore_models:
         if args.spec is not None:
             transformer_layer_spec = import_module(args.spec)

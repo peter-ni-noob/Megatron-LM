@@ -2,7 +2,7 @@ import torch
 import random
 # Set the seed
 seed = 42
-# torch.manual_seed(seed)
+torch.manual_seed(seed)
 
 # Generate some random numbers
 a = torch.randn(3, 3)
