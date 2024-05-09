@@ -53,7 +53,7 @@ class DistributedDataParallel(MegatronModule):
         super().__init__(config=config)
         self.module = module
 
-        # Set bucket_size to infinity if overlap_grad_reduce is False.
+        # Set bucket_size to infinity if overlap_grad_reduce is False.对张量并行都是false
         self.overlap_grad_reduce = overlap_grad_reduce
         self.use_distributed_optimizer = use_distributed_optimizer
 
@@ -85,7 +85,7 @@ class DistributedDataParallel(MegatronModule):
 
             param.grad_added_to_main_grad = False
             param_to_name[param] = name
-
+            #获取参数的属性，如果没有返回True，有则返回他的值，也可能为True
             if getattr(param, 'allreduce', True):
                 dense_params.append(param)
             else:
@@ -132,7 +132,7 @@ class DistributedDataParallel(MegatronModule):
 
         data_parallel_world_size = torch.distributed.get_world_size(data_parallel_group)
 
-        # Allocate the param+grad buffers for dense params' grads.
+        # Allocate the param+grad buffers for dense params' grads.实际上不分配para，对于不用分布式优化器
         self.buffers = allocate_buffers_for_parameters(
             dense_params,
             data_parallel_group,
@@ -165,7 +165,7 @@ class DistributedDataParallel(MegatronModule):
         self.grad_accs = []
         for param in self.module.parameters():
             if param.requires_grad:
-                # Expand so we get access to grad_fn.
+                # Expand so we get access to grad_fn.主要是获得grad_fn
                 param_tmp = param.expand_as(param)
                 # Get the gradient accumulator function.
                 grad_acc = param_tmp.grad_fn.next_functions[0][0]

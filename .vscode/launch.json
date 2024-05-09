@@ -5,6 +5,7 @@
     //torchrun /usr/local/bin/torchrun
     "version": "0.2.0",
     "configurations": [
+    
         {
             "name": "Python 调试程序: 包含参数的当前文件",
             "type": "debugpy",
@@ -38,7 +39,7 @@
                 "--pipeline-model-parallel-size",
                 "1",
                 "--num-layers",
-                "2",
+                "1",
                 "--hidden-size",
                 "768",
                 "--num-attention-heads",

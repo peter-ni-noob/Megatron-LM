@@ -1,4 +1,4 @@
-GPUS_PER_NODE=4
+GPUS_PER_NODE=2
 MASTER_ADDR=localhost
 MASTER_PORT=6001
 NNODES=1
@@ -9,7 +9,7 @@ CHECKPOINT_PATH=/root/Megatron-LM/experiments/mygpt2
 VOCAB_FILE=/root/Megatron-LM/experiments/gpt2_tokenizer_element/gpt2-vocab.json
 MERGE_FILE=/root/Megatron-LM/experiments/gpt2_tokenizer_element/gpt2-merges.txt
 DATA_PATH=/data/my-gpt2_text_document
-GPT_ARGS="--num-layers 2
+GPT_ARGS="--num-layers 1
 --hidden-size 768
 --num-attention-heads 12
 --seq-length 1024
@@ -35,7 +35,7 @@ export CUDA_HOME=/usr/local/cuda
 TENSORBOARD_ARGS="--tensorboard-dir experiments/tensorboard"
 torchrun $DISTRIBUTED_ARGS \
         pretrain_gpt.py \
-        --tensor-model-parallel-size 4 \
+        --tensor-model-parallel-size 2 \
         --pipeline-model-parallel-size 1 \
         $GPT_ARGS \
         --vocab-file $VOCAB_FILE \

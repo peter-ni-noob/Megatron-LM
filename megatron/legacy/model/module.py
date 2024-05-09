@@ -183,7 +183,7 @@ class Float16Module(MegatronModule):
     def set_input_tensor(self, input_tensor):
         return self.module.set_input_tensor(input_tensor)
 
-
+#input[0]为12个token(1024){12,1024},input[1]为12个(0,1,2,3...),input[2]为attention mask,kwargs为labels的字典，{12,1024}
     def forward(self, *inputs, **kwargs):
         if mpu.is_pipeline_first_stage():
             inputs = fp32_to_float16(inputs, self.float16_convertor)

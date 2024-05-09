@@ -6,7 +6,10 @@ import os
 import math
 import numpy as np
 import torch
+import torch.distributed
 import torch.nn.functional as F
+import myutil
+
 from typing import Optional
 
 from megatron import core
@@ -86,6 +89,7 @@ class ParallelMLP(MegatronModule):
     state back into h hidden dimension.
     """
 
+
     def __init__(self, config, is_expert=False):
         super(ParallelMLP, self).__init__()
         args = get_args()
@@ -156,7 +160,9 @@ class ParallelMLP(MegatronModule):
             intermediate_parallel = self.activation_func(intermediate_parallel)
 
         # [s, b, h]
-        output, output_bias = self.dense_4h_to_h(intermediate_parallel)
+
+        output, output_bias = self.dense_4h_to_h(intermediate_parallel,"MLPout")
+        # myutil.save_count_tensor(output,"MLPout")
         return output, output_bias
 
 def sinkhorn(cost, tol=0.0001):
@@ -796,7 +802,7 @@ class ParallelAttention(MegatronModule):
                 context_layer = self._checkpointed_attention_forward(
                     query_layer, key_layer, value_layer, attention_mask)
             else:
-                context_layer = self.core_attention(
+                context_layer = self.core_attention(#进入core attention
                     query_layer, key_layer, value_layer, attention_mask)
         else:
             q, k, v = [rearrange(x, 's b ... -> b s ...').contiguous()

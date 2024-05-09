@@ -5,6 +5,7 @@
 import math
 
 import torch
+import torch.distributed
 
 from megatron.training import get_args
 from megatron.legacy.model import LayerNorm, RMSNorm
@@ -77,3 +78,8 @@ def get_norm(config):
                        sequence_parallel=config.sequence_parallel)
     else:
         raise Exception(f"unsupported norm type '{args.normalization}'.")
+
+
+
+
+

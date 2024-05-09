@@ -10,11 +10,11 @@ import warnings
 from typing import Any, Callable, Optional, Tuple
 
 import torch
+import torch.distributed
 import torch.nn.functional as F
 import torch.nn.init as init
 from torch.cuda.amp import custom_bwd, custom_fwd
 from torch.nn.parameter import Parameter
-
 from megatron.core.model_parallel_config import ModelParallelConfig
 from megatron.core.parallel_state import (
     get_global_memory_buffer,
@@ -321,7 +321,7 @@ def linear_with_frozen_weight(
 
     return LinearWithFrozenWeight.apply(*args)
 
-
+#torch.autograd.Function 可以自定义前向和后向的，无参算子
 class LinearWithGradAccumulationAndAsyncCommunication(torch.autograd.Function):
     """See linear_with_grad_accumulation_and_async_allreduce"""
 
@@ -935,7 +935,7 @@ class RowParallelLinear(torch.nn.Module):
             )
         )
 
-    def forward(self, input_):
+    def forward(self, input_,info=None):
         """Forward of RowParallelLinear
 
         Args:
@@ -971,7 +971,10 @@ class RowParallelLinear(torch.nn.Module):
             async_grad_allreduce=False,
             sequence_parallel=False,
         )
-
+        if info == "MLPout":
+            import myutil
+            rank=torch.distributed.get_rank()
+        #     myutil.save_count_tensor(output_parallel,"beforemlp_"+str(rank),rank)
         # All-reduce across all the partitions.
         if self.explicit_expert_comm:
             assert self.skip_bias_add

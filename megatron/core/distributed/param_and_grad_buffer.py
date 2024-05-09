@@ -177,7 +177,7 @@ class Bucket:
         if len(self.params_with_grad) == len(self.params):
             self.start_grad_sync()
 
-
+#梯度在连续的buffer，是遍历参数的，对GPT2张量并行Param不会重新安排，grad会提前申请 buffer
 class ParamAndGradBuffer:
     """
     Groups parameters and gradients into a contiguous buffer, and then breaks the buffer into
@@ -332,7 +332,7 @@ class ParamAndGradBuffer:
         if use_distributed_optimizer:
             assert self.numel % self.data_parallel_world_size == 0
         self.param_data = None
-        # Only re-map param tensors if using distributed optimizer.
+        # Only re-map param tensors if using distributed optimizer.false
         if self.use_distributed_optimizer:
             self.param_data = torch.zeros(
                 self.numel,
