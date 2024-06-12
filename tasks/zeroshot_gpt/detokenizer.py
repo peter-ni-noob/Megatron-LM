@@ -31,7 +31,7 @@ def wikitext_detokenizer(string):
     string = string.replace(" ! ", "! ")
     string = string.replace(" ? ", "? ")
     string = string.replace(" , ", ", ")
-    # double brackets
+    # double brackets 把((xxx))--->(xxx)
     string = re.sub(r"\(\s*([^\)]*?)\s*\)", r"(\1)", string)
     string = re.sub(r"\[\s*([^\]]*?)\s*\]", r"[\1]", string)
     string = re.sub(r"{\s*([^}]*?)\s*}", r"{\1}", string)

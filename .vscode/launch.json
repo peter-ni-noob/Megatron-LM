@@ -92,7 +92,10 @@
             ],
             "env": {"CUDA_DEVICE_MAX_CONNECTIONS":"1",
             "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION":"python",
-            "CUDA_HOME":"/usr/local/cuda"}
+            "CUDA_HOME":"/usr/local/cuda",
+            "CUDA_VISIBLE_DEVICES":"3,2"
+        
+        }
         },
         {
             "name": "test调试程序: 当前文件",
@@ -115,6 +118,62 @@
                 "${file}"
             ]
 
+        },
+        {
+            "name": "torchrun调试程序: gpt2评估",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/usr/local/bin/torchrun",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--nproc_per_node",
+                "1",
+                "--nnodes",
+                "1",
+                "--node_rank",
+                "0",
+                "--master_addr",
+                "localhost",
+                "--master_port",
+                "6001",
+                "${file}",
+                "--task",
+                "WIKITEXT103",
+                "--num-layers",
+                "1",
+                "--hidden-size",
+                "768",
+                "--num-attention-heads",
+                "12",
+                "--seq-length",
+                "1024",
+                "--max-position-embeddings",
+                "1024",
+                "--fp16",
+                "--vocab-file",
+                "/root/Megatron-LM/experiments/gpt2_tokenizer_element/gpt2-vocab.json",
+                "--valid-data",
+                "/root/Megatron-LM/wiki.test.tokens.txt",
+                "--tokenizer-type",
+                "GPT2BPETokenizer",
+                "--merge-file",
+                "/root/Megatron-LM/experiments/gpt2_tokenizer_element/gpt2-merges.txt",
+                "--load",
+                "/root/Megatron-LM/experiments/mygpt2",
+                "--micro-batch-size",
+                "1",
+                "--log-interval",
+                "10",
+                "--no-load-optim",
+                "--no-load-rng"
+            ],
+            "env": {"CUDA_DEVICE_MAX_CONNECTIONS":"1",
+            "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION":"python",
+            "CUDA_HOME":"/usr/local/cuda",
+            "CUDA_VISIBLE_DEVICES":"3,2"
+        
+        }
         }
     ]
 }

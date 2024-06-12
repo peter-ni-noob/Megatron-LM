@@ -126,7 +126,7 @@ def set_layer_state(args, model, hf_model, layer_idx):
 def load_checkpoint_to_model(args):
     '''Set model params.'''
 
-    from pretrain_gpt import model_provider
+    from pretrain_gpt_nexus_dataset import model_provider
     from transformers import LlamaForCausalLM
 
     # Load Huggingface model.

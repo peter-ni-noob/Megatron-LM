@@ -18,7 +18,7 @@ from megatron.core.datasets.blended_megatron_dataset_builder import BlendedMegat
 from megatron.training import pretrain
 from megatron.training.utils import get_ltor_masks_and_position_ids
 from megatron.training.utils import average_losses_across_data_parallel_group
-from pretrain_gpt import model_provider, is_dataset_built_on_rank
+from pretrain_gpt_nexus_dataset import model_provider, is_dataset_built_on_rank
 from tools.retro.sft.dataset_conv import JsonQADataset, JsonQADatasetConfig, RetroJsonQADataset, RetroJsonQADatasetConfig
 
 

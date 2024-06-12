@@ -19,7 +19,7 @@ from megatron.core.models.retro import get_retro_decoder_block_spec, RetroConfig
 from megatron.core.models.retro.utils import get_all_true_mask
 from megatron.training import pretrain
 from megatron.training.utils import get_ltor_masks_and_position_ids
-from pretrain_gpt import (
+from pretrain_gpt_nexus_dataset import (
     is_dataset_built_on_rank,
     loss_func,
     model_provider as default_model_provider,

@@ -15,7 +15,7 @@ from megatron.core.models.gpt.gpt_layer_specs import get_gpt_layer_with_transfor
 from megatron.core.models.multimodal.llava_model import LLaVAModel
 from megatron.core.transformer.spec_utils import import_module
 from megatron.training import pretrain
-from pretrain_gpt import is_dataset_built_on_rank, loss_func
+from pretrain_gpt_nexus_dataset import is_dataset_built_on_rank, loss_func
 
 
 def model_provider(pre_process=True, post_process=True) -> LLaVAModel:

@@ -22,7 +22,7 @@ def post_language_model_processing(lm_output, labels, logit_weights,
         lm_output,
         logit_weights,
         parallel_output)
-
+    #并没有通信
     if labels is None:
         # [s b h] => [b s h]
         return output.transpose(0,1).contiguous()

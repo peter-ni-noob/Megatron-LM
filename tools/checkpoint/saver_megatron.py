@@ -178,7 +178,7 @@ def save_checkpoint(queue, args):
 
     # Determine how to make our models
     if md.model_type == 'GPT':
-        from pretrain_gpt import model_provider
+        from pretrain_gpt_nexus_dataset import model_provider
         margs.model_type = ModelType.encoder_or_decoder
     elif md.model_type == 'BERT':
         from pretrain_bert import model_provider

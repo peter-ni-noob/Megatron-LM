@@ -90,7 +90,7 @@ if __name__ == '__main__':
     elif args.task in ['MNLI', 'QQP']:
         from glue.finetune import main
     elif args.task in ['LAMBADA', 'WIKITEXT103']:
-        from zeroshot_gpt.evaluate import main
+        from tasks.zeroshot_gpt.evaluate import main
     elif args.task in ['ICT-ZEROSHOT-NQ', 'RETRIEVER-EVAL']:
         from orqa.evaluate_orqa import main
     elif args.task in ['RET-FINETUNE-NQ']:

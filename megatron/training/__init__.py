@@ -15,7 +15,8 @@ from .global_vars import get_adlr_autoresume
 from .global_vars import get_timers
 from .initialize  import initialize_megatron
 from .training import pretrain
-
+from .training import get_model
+from .training import *
 from .utils import (print_rank_0,
                     is_last_rank,
                     print_rank_last)

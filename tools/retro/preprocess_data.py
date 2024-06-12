@@ -42,7 +42,7 @@ from megatron.tokenizer.tokenizer import (
     _GPTSentencePieceTokenizer,
 )
 from megatron.training import get_train_valid_test_num_samples
-from pretrain_gpt import is_dataset_built_on_rank
+from pretrain_gpt_nexus_dataset import is_dataset_built_on_rank
 from tools.bert_embedding import BertEmbedder, DiskDataParallelBertEmbedder
 from tools.retro.config_utils import add_config_args
 
