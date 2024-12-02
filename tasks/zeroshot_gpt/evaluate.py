@@ -1,4 +1,4 @@
-# Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved. wikitext103
 
 """GPT zero-shot evaluation."""
 
@@ -19,6 +19,14 @@ from megatron.training.arguments import core_transformer_config_from_args
 from tasks.finetune_utils import build_data_loader
 
 from .datasets import build_dataset
+
+import concurrent.futures
+from tqdm import tqdm
+import numpy as np
+import os
+import sys
+
+
 
 
 def get_model_provider(eval_metric):
@@ -121,19 +129,66 @@ def evaluate(data_loader, model, eval_metric):
 
     total_output = 0.0
     with torch.no_grad():
+        datachunk=[]
+        labelchunk=[]
+        maskchunk=[]
+        cnt=0
+        size=len(data_loader)
         # For all the batches in the dataset.
         for iteration, batch in enumerate(data_loader):
             if iteration % args.log_interval == 0:
-                print_rank_0('> working on iteration: {}'.format(iteration))
+                print_rank_0('> working on batch: {}'.format(iteration))
             # Forward evaluation.
-            output = forward_step(batch, model, eval_metric, config)
+            tokens, labels, attention_mask, position_ids, loss_mask = process_batch(
+        batch)
+            datachunk.append(torch.reshape(tokens,[-1]))
+            labelchunk.append(torch.reshape(labels,[-1]))
+            maskchunk.append(torch.reshape(loss_mask,[-1]))
+            cnt+=1
+            if(cnt%10000==0 or cnt==size):
+                main_dir="/data/dataset_test" #modify this path to save result npy
+                bk=cnt//10000
+                path=os.path.join(main_dir,str(bk))
+                os.mkdir(path=path)
 
-            # Reduce across processes.
-            if parallel_state.is_pipeline_last_stage():
-                torch.distributed.all_reduce(output,
-                                             group=parallel_state.get_data_parallel_group())
+                outputdata=torch.stack(datachunk,dim=0)
+                outputlabel=torch.stack(labelchunk,dim=0)
+                mask=torch.stack(maskchunk,dim=0)
+                outputdata[outputdata>50256]=50256
+                outputlabel[outputlabel>50256]=50256
+                outputdata=outputdata.cpu().numpy()
+                outputdata=np.ascontiguousarray(outputdata,dtype=np.float32)
+                outputlabel=outputlabel.cpu().numpy()
+                outputlabel=np.ascontiguousarray(outputlabel,dtype=np.float32)
+                mask=mask.cpu().numpy()
+                mask=np.ascontiguousarray(mask,dtype=np.float32)
 
-                total_output += output
+                np.save(os.path.join(path,"token_float32.npy"),outputdata)
+                np.save(os.path.join(path,"label_float32.npy"),outputlabel)
+                np.save(os.path.join(path,"loss_mask.npy"),mask)
+
+                datachunk.clear()
+                labelchunk.clear()
+                maskchunk.clear()
+                print(bk)
+        sys.exit()
+
+
+
+
+                
+
+
+            
+            
+            # output = forward_step(batch, model, eval_metric, config)
+
+            # # Reduce across processes.
+            # if parallel_state.is_pipeline_last_stage():
+            #     torch.distributed.all_reduce(output,
+            #                                  group=parallel_state.get_data_parallel_group())
+
+            #     total_output += output
 
     return total_output
 
@@ -191,7 +246,7 @@ def main():
         raise NotImplementedError('{} task is not implemented.'.format(
             args.task))
 
-    # Set up model and load checkpoint.
+    # # Set up model and load checkpoint.
     model = get_model(get_model_provider(eval_metric), wrap_with_ddp=False)
     if args.load is not None:
         _ = load_checkpoint(model, None, None)

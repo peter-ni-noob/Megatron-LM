@@ -289,7 +289,7 @@ def generator_nexus_dataset(iteration,begin,end,nb,allsize):
 
         if(cnt==10000):
             cnt=0
-            main_dir="/data/dataset"
+            main_dir="/data/dataset_test" #modify this path to save results
             block_dir=os.path.join(main_dir,str(nb))
             os.mkdir(block_dir)
             np.save(os.path.join(block_dir,"token_float32.npy"),np.stack(datachunk,0))
