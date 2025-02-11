@@ -9,3 +9,4 @@ logs
 .hypothesis
 experiments/tensorboard/*
 experiments/mygpt2/*
+experiments/log/*
