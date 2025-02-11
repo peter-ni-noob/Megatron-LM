@@ -81,6 +81,7 @@ def _gather_along_last_dim(input_):
 
     tensor_list = [torch.empty_like(input_) for _ in range(world_size)]
     tensor_list[rank] = input_
+    # import torch.distributed
     torch.distributed.all_gather(tensor_list, input_, group=get_tensor_model_parallel_group())
 
     # Note: torch.cat already creates a contiguous tensor.
@@ -101,6 +102,7 @@ def _gather_along_first_dim(input_):
     dim_size[0] = dim_size[0] * world_size
 
     output = torch.empty(dim_size, dtype=input_.dtype, device=torch.cuda.current_device())
+    # import torch.distributed
     torch.distributed._all_gather_base(
         output, input_.contiguous(), group=get_tensor_model_parallel_group()
     )
@@ -123,6 +125,7 @@ def _reduce_scatter_along_first_dim(input_):
     dim_size[0] = dim_size[0] // world_size
 
     output = torch.empty(dim_size, dtype=input_.dtype, device=torch.cuda.current_device())
+    # import torch.distributed
     torch.distributed._reduce_scatter_base(
         output, input_.contiguous(), group=get_tensor_model_parallel_group()
     )
@@ -176,7 +179,10 @@ class _CopyToModelParallelRegion(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx, grad_output):
-        return _reduce(grad_output)
+        g=_reduce(grad_output)
+        # import numpy as np
+        # np.save("/workspace/Megatron-LM/temp/xgrad.npy",g.cpu().detach().numpy().astype(np.float32))
+        return g
 
 
 class _ReduceFromModelParallelRegion(torch.autograd.Function):

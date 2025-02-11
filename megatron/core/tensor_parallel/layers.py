@@ -766,6 +766,7 @@ class ColumnParallelLinear(torch.nn.Module):
         ):
             input_parallel = input_
         else:
+            #后向梯度allreduce，前向啥都不干
             input_parallel = copy_to_tensor_model_parallel_region(input_)
 
         # Matrix multiply.

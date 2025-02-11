@@ -236,6 +236,7 @@ def _initialize_distributed():
             torch.cuda.set_device(device)
         # Call the init process
         # import torch.distributed,每个进行都会跑
+        # import torch.distributed
         torch.distributed.init_process_group(
             backend=args.distributed_backend,
             world_size=args.world_size,

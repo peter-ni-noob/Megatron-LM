@@ -10,3 +10,5 @@ logs
 experiments/tensorboard/*
 experiments/mygpt2/*
 experiments/log/*
+*.npy
+*.pt

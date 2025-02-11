@@ -200,19 +200,19 @@ class MegatronOptimizer(ABC):
         """Step the optimizer."""
         pass
 
-    @abstractmethod
-    def sharded_state_dict(
-        self, model_sharded_state_dict: ShardedStateDict, is_loading: bool = False
-    ) -> ShardedStateDict:
-        """ Builds sharded state dict for the optimizer, based on model's sharded state dict.
+    # @abstractmethod
+    # def sharded_state_dict(
+    #     self, model_sharded_state_dict: ShardedStateDict, is_loading: bool = False
+    # ) -> ShardedStateDict:
+    #     """ Builds sharded state dict for the optimizer, based on model's sharded state dict.
 
-        Arguments:
-            model_sharded_state_dict (ShardedStateDict): sharded state dict of the model
-            is_loading (bool, optional): flag indicating whether the state dict will be used to save or load the optimizer state.
-                Defaults to False.
+    #     Arguments:
+    #         model_sharded_state_dict (ShardedStateDict): sharded state dict of the model
+    #         is_loading (bool, optional): flag indicating whether the state dict will be used to save or load the optimizer state.
+    #             Defaults to False.
 
-        Returns: optimizer sharded state dict
-        """
+    #     Returns: optimizer sharded state dict
+    #     """
 
 
 class MixedPrecisionOptimizer(MegatronOptimizer):
